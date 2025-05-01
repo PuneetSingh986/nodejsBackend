@@ -1,0 +1,55 @@
+version: "3.8"
+
+services:
+  api:
+    build:
+      context: .
+      target: ${NODE_ENV:-development}
+    container_name: nodejs-api
+    restart: unless-stopped
+    ports:
+      - "${PORT:-3000}:3000"
+    volumes:
+      - ./logs:/app/logs
+      # For development, uncomment the line below to mount source code
+      # - .:/app:delegated
+    environment:
+      - NODE_ENV=${NODE_ENV:-development}
+      - PORT=3000
+      - MONGO_URI=mongodb://mongo:27017/nodejs-api
+      - JWT_SECRET=${JWT_SECRET:-your_super_secure_jwt_secret_key}
+      - JWT_EXPIRE=${JWT_EXPIRE:-1d}
+      - RATE_LIMIT_TIME=${RATE_LIMIT_TIME:-15}
+      - RATE_LIMIT_MAX=${RATE_LIMIT_MAX:-100}
+      - DEFAULT_ADMIN_EMAIL=${DEFAULT_ADMIN_EMAIL:-admin@example.com}
+      - DEFAULT_ADMIN_PASSWORD=${DEFAULT_ADMIN_PASSWORD:-admin123}
+      - PAPERTRAIL_HOST=${PAPERTRAIL_HOST:-}
+      - PAPERTRAIL_PORT=${PAPERTRAIL_PORT:-}
+      - PAPERTRAIL_HOSTNAME=${PAPERTRAIL_HOSTNAME:-nodejs-api}
+    depends_on:
+      - mongo
+    networks:
+      - app-network
+
+  mongo:
+    image: mongo:6
+    container_name: nodejs-mongo
+    restart: unless-stopped
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongodb-data:/data/db
+    environment:
+      # For production, set these values in your .env file
+      # - MONGO_INITDB_ROOT_USERNAME=${MONGO_USERNAME}
+      # - MONGO_INITDB_ROOT_PASSWORD=${MONGO_PASSWORD}
+    networks:
+      - app-network
+
+volumes:
+  mongodb-data:
+    driver: local
+
+networks:
+  app-network:
+    driver: bridge

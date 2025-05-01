@@ -1,0 +1,30 @@
+# dependencies
+/node_modules
+package-lock.json
+
+# environment variables
+.env
+.env.*
+!.env.example
+
+# logs
+/logs
+*.log
+npm-debug.log*
+
+# coverage
+/coverage
+
+# production
+/build
+/dist
+
+# misc
+.DS_Store
+.vscode
+.idea
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw? 
