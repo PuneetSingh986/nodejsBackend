@@ -1,6 +1,7 @@
 const express = require("express");
 const {
   registerWithPhone,
+  login,
   verifyOTP,
   resendOTP,
   completeProfile,
@@ -12,6 +13,7 @@ const {
 } = require("../middleware/auth.middleware");
 const {
   registerWithPhoneRules,
+  loginRules,
   verifyOTPRules,
   resendOTPRules,
   completeProfileRules,
@@ -22,6 +24,7 @@ const router = express.Router();
 
 // Public routes
 router.post("/register", validate(registerWithPhoneRules), registerWithPhone);
+router.post("/login", validate(loginRules), login);
 router.post("/verify-otp", validate(verifyOTPRules), verifyOTP);
 router.post("/resend-otp", validate(resendOTPRules), resendOTP);
 

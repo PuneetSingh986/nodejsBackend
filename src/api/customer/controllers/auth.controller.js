@@ -63,6 +63,57 @@ const registerWithPhone = async (req, res, next) => {
 };
 
 /**
+ * @desc    Login customer with phone number
+ * @route   POST /api/v1/customer/auth/login
+ * @access  Public
+ */
+const login = async (req, res, next) => {
+  try {
+    const { phone } = req.body;
+
+    // Check if customer exists
+    const customer = await authService.findCustomerByPhone(phone);
+
+    if (!customer) {
+      return sendErrorResponse(
+        res,
+        StatusCodes.NOT_FOUND,
+        "No account found with this phone number"
+      );
+    }
+
+    if (!customer.isPhoneVerified) {
+      return sendErrorResponse(
+        res,
+        StatusCodes.FORBIDDEN,
+        "Phone number not verified. Please register first."
+      );
+    }
+
+    // Generate and send OTP
+    const isOTPSent = await authService.generateAndSendOTP(customer);
+
+    if (!isOTPSent) {
+      return sendErrorResponse(
+        res,
+        StatusCodes.INTERNAL_SERVER_ERROR,
+        "Failed to send OTP. Please try again."
+      );
+    }
+
+    sendSuccessResponse(
+      res,
+      StatusCodes.OK,
+      { customerId: customer._id },
+      "OTP sent to your phone number for login"
+    );
+  } catch (error) {
+    logger.error(`Error in login: ${error.message}`);
+    next(error);
+  }
+};
+
+/**
  * @desc    Verify OTP
  * @route   POST /api/v1/customer/auth/verify-otp
  * @access  Public
@@ -81,6 +132,9 @@ const verifyOTP = async (req, res, next) => {
         "Invalid or expired OTP"
       );
     }
+
+    // Update last login timestamp
+    await authService.updateLastLogin(customer._id);
 
     // Generate token response
     const tokenData = authService.generateTokenResponse(customer);
@@ -195,6 +249,7 @@ const getMe = async (req, res, next) => {
 
 module.exports = {
   registerWithPhone,
+  login,
   verifyOTP,
   resendOTP,
   completeProfile,

@@ -17,6 +17,7 @@ const sendSuccessResponse = (
 ) => {
   return res.status(statusCode).json({
     status: "success",
+    statusCode,
     message,
     data,
   });
@@ -32,6 +33,7 @@ const sendSuccessResponse = (
 const sendErrorResponse = (res, statusCode, message, errors = null) => {
   const response = {
     status: "error",
+    statusCode,
     message,
   };
 
@@ -67,6 +69,7 @@ const sendPaginatedResponse = (
 
   return res.status(statusCode).json({
     status: "success",
+    statusCode,
     message,
     data,
     pagination: {

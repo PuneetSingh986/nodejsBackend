@@ -23,6 +23,7 @@ const protect = async (req, res, next) => {
     if (!token) {
       return res.status(StatusCodes.UNAUTHORIZED).json({
         status: "error",
+        statusCode: StatusCodes.UNAUTHORIZED,
         message: "Not authorized to access this route",
       });
     }
@@ -35,6 +36,7 @@ const protect = async (req, res, next) => {
       if (decoded.role !== "customer") {
         return res.status(StatusCodes.FORBIDDEN).json({
           status: "error",
+          statusCode: StatusCodes.FORBIDDEN,
           message: "Not authorized as a customer",
         });
       }
@@ -46,6 +48,7 @@ const protect = async (req, res, next) => {
       if (!customer) {
         return res.status(StatusCodes.UNAUTHORIZED).json({
           status: "error",
+          statusCode: StatusCodes.UNAUTHORIZED,
           message: "The customer belonging to this token no longer exists",
         });
       }
@@ -54,6 +57,7 @@ const protect = async (req, res, next) => {
       if (!customer.active) {
         return res.status(StatusCodes.FORBIDDEN).json({
           status: "error",
+          statusCode: StatusCodes.FORBIDDEN,
           message: "This customer account has been deactivated",
         });
       }
@@ -65,6 +69,7 @@ const protect = async (req, res, next) => {
       logger.error(`Auth middleware error: ${error.message}`);
       return res.status(StatusCodes.UNAUTHORIZED).json({
         status: "error",
+        statusCode: StatusCodes.UNAUTHORIZED,
         message: "Not authorized to access this route",
       });
     }
@@ -81,6 +86,7 @@ const requirePhoneVerified = async (req, res, next) => {
   if (!req.customer.isPhoneVerified) {
     return res.status(StatusCodes.FORBIDDEN).json({
       status: "error",
+      statusCode: StatusCodes.FORBIDDEN,
       message:
         "Phone verification required. Please verify your phone number first.",
     });
@@ -95,6 +101,7 @@ const requireProfileCompleted = async (req, res, next) => {
   if (!req.customer.profileCompleted) {
     return res.status(StatusCodes.FORBIDDEN).json({
       status: "error",
+      statusCode: StatusCodes.FORBIDDEN,
       message:
         "Profile completion required. Please complete your profile first.",
     });

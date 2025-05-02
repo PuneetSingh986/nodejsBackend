@@ -14,6 +14,16 @@ const registerWithPhoneRules = [
     .withMessage("Please provide a valid phone number"),
 ];
 
+// Validation rules for login
+const loginRules = [
+  body("phone")
+    .trim()
+    .notEmpty()
+    .withMessage("Phone number is required")
+    .matches(/^\+?[1-9]\d{9,14}$/)
+    .withMessage("Please provide a valid phone number"),
+];
+
 // Validation rules for OTP verification
 const verifyOTPRules = [
   body("customerId")
@@ -77,6 +87,7 @@ const completeProfileRules = [
 
 module.exports = {
   registerWithPhoneRules,
+  loginRules,
   verifyOTPRules,
   resendOTPRules,
   completeProfileRules,

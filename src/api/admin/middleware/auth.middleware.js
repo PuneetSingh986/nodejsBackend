@@ -23,6 +23,7 @@ const protect = async (req, res, next) => {
     if (!token) {
       return res.status(StatusCodes.UNAUTHORIZED).json({
         status: "error",
+        statusCode: StatusCodes.UNAUTHORIZED,
         message: "Not authorized to access this route",
       });
     }
@@ -35,6 +36,7 @@ const protect = async (req, res, next) => {
       if (!decoded.isAdmin) {
         return res.status(StatusCodes.FORBIDDEN).json({
           status: "error",
+          statusCode: StatusCodes.FORBIDDEN,
           message: "Not authorized to access admin routes",
         });
       }
@@ -46,6 +48,7 @@ const protect = async (req, res, next) => {
       if (!admin) {
         return res.status(StatusCodes.UNAUTHORIZED).json({
           status: "error",
+          statusCode: StatusCodes.UNAUTHORIZED,
           message: "The admin belonging to this token no longer exists",
         });
       }
@@ -54,6 +57,7 @@ const protect = async (req, res, next) => {
       if (!admin.isActive) {
         return res.status(StatusCodes.FORBIDDEN).json({
           status: "error",
+          statusCode: StatusCodes.FORBIDDEN,
           message: "Your account has been deactivated",
         });
       }
@@ -65,6 +69,7 @@ const protect = async (req, res, next) => {
       logger.error(`Auth middleware error: ${error.message}`);
       return res.status(StatusCodes.UNAUTHORIZED).json({
         status: "error",
+        statusCode: StatusCodes.UNAUTHORIZED,
         message: "Not authorized to access this route",
       });
     }

@@ -15,6 +15,7 @@ const login = async (req, res, next) => {
     if (!email || !password) {
       return res.status(StatusCodes.BAD_REQUEST).json({
         status: "error",
+        statusCode: StatusCodes.BAD_REQUEST,
         message: "Please provide email and password",
       });
     }
@@ -25,6 +26,7 @@ const login = async (req, res, next) => {
     if (!admin) {
       return res.status(StatusCodes.UNAUTHORIZED).json({
         status: "error",
+        statusCode: StatusCodes.UNAUTHORIZED,
         message: "Invalid credentials",
       });
     }
@@ -33,6 +35,7 @@ const login = async (req, res, next) => {
     if (!admin.isActive) {
       return res.status(StatusCodes.FORBIDDEN).json({
         status: "error",
+        statusCode: StatusCodes.FORBIDDEN,
         message:
           "Your account has been deactivated. Please contact the super admin.",
       });
@@ -44,6 +47,7 @@ const login = async (req, res, next) => {
     if (!isMatch) {
       return res.status(StatusCodes.UNAUTHORIZED).json({
         status: "error",
+        statusCode: StatusCodes.UNAUTHORIZED,
         message: "Invalid credentials",
       });
     }
@@ -71,6 +75,7 @@ const getMe = async (req, res, next) => {
 
     res.status(StatusCodes.OK).json({
       status: "success",
+      statusCode: StatusCodes.OK,
       data: {
         admin,
       },
@@ -90,6 +95,7 @@ const logout = async (req, res, next) => {
   try {
     res.status(StatusCodes.OK).json({
       status: "success",
+      statusCode: StatusCodes.OK,
       message: "Successfully logged out",
     });
   } catch (error) {
@@ -109,6 +115,7 @@ const initializeAdmin = async (req, res, next) => {
 
     res.status(StatusCodes.OK).json({
       status: "success",
+      statusCode: StatusCodes.OK,
       message: "Initial admin created successfully",
     });
   } catch (error) {
@@ -127,6 +134,7 @@ const sendTokenResponse = (admin, statusCode, res) => {
 
   res.status(statusCode).json({
     status: "success",
+    statusCode,
     token,
     data: {
       admin: {

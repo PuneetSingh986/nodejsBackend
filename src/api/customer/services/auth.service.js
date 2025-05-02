@@ -3,15 +3,19 @@ const otpService = require("./otp.service");
 const logger = require("../../../utils/logger");
 
 /**
- * Find a customer by phone number
+ * Find a customer by phone number or ID
  * @param {string} phone - Customer phone number
+ * @param {string} customerId - Customer ID
  * @returns {Promise<object|null>} - Customer or null
  */
-const findCustomerByPhone = async (phone) => {
+const findCustomerByPhone = async (phone, customerId = null) => {
   try {
+    if (customerId) {
+      return await Customer.findById(customerId);
+    }
     return await Customer.findOne({ phone });
   } catch (error) {
-    logger.error(`Error finding customer by phone: ${error.message}`);
+    logger.error(`Error finding customer: ${error.message}`);
     return null;
   }
 };
@@ -151,6 +155,25 @@ const generateTokenResponse = (customer) => {
   };
 };
 
+/**
+ * Update customer's last login timestamp
+ * @param {string} customerId - Customer ID
+ * @returns {Promise<boolean>} - Whether update was successful
+ */
+const updateLastLogin = async (customerId) => {
+  try {
+    const result = await Customer.findByIdAndUpdate(
+      customerId,
+      { lastLogin: Date.now() },
+      { new: true }
+    );
+    return !!result;
+  } catch (error) {
+    logger.error(`Error updating last login: ${error.message}`);
+    return false;
+  }
+};
+
 module.exports = {
   findCustomerByPhone,
   createCustomer,
@@ -158,4 +181,5 @@ module.exports = {
   verifyCustomerOTP,
   completeCustomerProfile,
   generateTokenResponse,
+  updateLastLogin,
 };
